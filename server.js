@@ -9,6 +9,12 @@ const app = express();
 
 app.use(express.json());
 
+import authRouter from "./routes/auth.js";
+import todosRouter from "./routes/todos.js";
+
+app.use("/auth", authRouter);
+app.use("/todos", todosRouter);
+
 const startServer = async () => {
     try {
         app.on("error", (err) => {
