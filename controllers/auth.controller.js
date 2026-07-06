@@ -13,17 +13,20 @@ const registerUser = async (req, res, next) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+
 
         const existingUser = await pool.query(
             "SELECT * FROM users WHERE email = $1", [email.toLowerCase()]
         );
+
 
         if (existingUser.rows.length > 0) {
             return res.status(409).json({ 
                 message: "User already exists" 
             });
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await pool.query(
             'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
@@ -65,7 +68,7 @@ const loginUser = async (req, res, next) => {
 
         if (result.rows.length === 0) {
             return res.status(401).json({
-                message: "User not found"
+                message: "Invalid email or password"
             });
         }
 
@@ -73,8 +76,8 @@ const loginUser = async (req, res, next) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({
-                message: "Invalid credentials"
+            return res.status(401).json({
+                message: "Invalid email or password"
             });
         }
 
