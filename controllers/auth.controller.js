@@ -1,6 +1,8 @@
+
+// Register a new user.
 const registerUser = async (req, res, next) => {
     try {
-        const {username, email, password } = req.bodyl
+        const {username, email, password } = req.body;
 
         res.status(201).json({ 
             message: "User registered successfully" 
@@ -10,6 +12,7 @@ const registerUser = async (req, res, next) => {
     }
 };
 
+// Logs in an existing user.
 const loginUser = async (req, res, next) => {
     try {
         const {email, password } = req.body;
@@ -21,3 +24,8 @@ const loginUser = async (req, res, next) => {
         next(err);
     }
 };
+
+export {
+    registerUser,
+    loginUser
+}
