@@ -30,11 +30,18 @@ const registerUser = async (req, res, next) => {
             [name, email.toLowerCase(), hashedPassword]
         );
 
+        const token = jwt.sign(
+            { id: newUser.rows[0].id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
         const { password: _, ...safeUser } = newUser.rows[0];
 
         res.status(201).json({ 
             message: "User registered successfully",
             user: safeUser,
+            token: token
         });
     } catch (err) {
         next(err);
@@ -71,13 +78,20 @@ const loginUser = async (req, res, next) => {
             });
         }
 
+        const token = jwt.sign(
+            { id: user.id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
         res.status(200).json({ 
             message: "User logged in successfully",
             user: {
                 id: user.id,
                 name: user.name,
                 email: user.email
-            }
+            },
+            token: token
         });
 
     } catch (err) {
