@@ -27,3 +27,13 @@ const updateTodo = async (req, res, next) => {
         next(err);
     }
 };
+
+const deleteTodo = async (req, res, next) => {
+    try {
+        res.status(200).json({
+            message: "Todo deleted successfully"
+        });
+    } catch (err) {
+        next(err);
+    }
+}
