@@ -17,3 +17,13 @@ const createTodo = async (req, res, next) => {
         next(err);
     }
 };
+
+const updateTodo = async (req, res, next) => {
+    try {
+        res.status(200).json({
+            message: "Todo updated successfully"
+        });
+    } catch (err) {
+        next(err);
+    }
+};
