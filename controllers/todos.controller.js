@@ -31,26 +31,25 @@ const createTodo = async (req, res, next) => {
         const todo = await pool.query(
             'INSERT INTO todos (user_id, title, description, completed)'
             + ' VALUES ($1, $2, $3, $4) RETURNING *',
-            [title, description, completed, req.user.id]
+            [req.user.id, title, description, completed]
         );
 
         res.status(201).json({
             message: "Todo created successfully",
-            title: todo.rows[0].title,
-            description: todo.rows[0].description,
-            completed: todo.rows[0].completed
+            todo: todo.rows[0]
         });
     } catch (err) {
         next(err);
     }
 };
 
+// Update (put) an existing todo for the user.
 const updateTodo = async (req, res, next) => {
     try {
 
         const updated = await pool.query(
             'UPDATE todos SET title = $1, description = $2, completed = $3'
-            + ' WHERE id = $4 AND user_id = $5 RETURNING *', [req.body.title, req.body.description, req.body.completed, req.params.id, req.user.id]
+            + ' WHERE todo_id = $4 AND user_id = $5 RETURNING *', [req.body.title, req.body.description, req.body.completed, req.params.id, req.user.id]
         );
 
         if (updated.rows.length === 0) {
@@ -67,11 +66,12 @@ const updateTodo = async (req, res, next) => {
     }
 };
 
+// Delete an existing todo for the user.
 const deleteTodo = async (req, res, next) => {
     try {
 
         const deleted = await pool.query(
-            'DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *',
+            'DELETE FROM todos WHERE todo_id = $1 AND user_id = $2 RETURNING *',
             [req.params.id, req.user.id]
         );
 
