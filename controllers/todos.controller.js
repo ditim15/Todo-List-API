@@ -7,3 +7,13 @@ const getTodos = async (req, res, next) => {
         next(err);
     }
 };
+
+const createTodo = async (req, res, next) => {
+    try {
+        res.status(201).json({
+            message: "Todo created successfully"
+        });
+    } catch (err) {
+        next(err);
+    }
+};
