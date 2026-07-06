@@ -36,4 +36,11 @@ const deleteTodo = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+export {
+    getTodos,
+    createTodo,
+    updateTodo,
+    deleteTodo
 }
