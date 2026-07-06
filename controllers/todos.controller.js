@@ -47,8 +47,20 @@ const createTodo = async (req, res, next) => {
 
 const updateTodo = async (req, res, next) => {
     try {
+
+        const updated = await pool.query(
+            'UPDATE todos SET title = $1, description = $2, completed = $3'
+            + ' WHERE id = $4 AND user_id = $5 RETURNING *', [req.body.title, req.body.description, req.body.completed, req.params.id, req.user.id]
+        );
+
+        if (updated.rows.length === 0) {
+            return res.status(404).json({
+                message: "Todo not found"
+            });
+        }
         res.status(200).json({
-            message: "Todo updated successfully"
+            message: "Todo updated successfully",
+            todo: updated.rows[0]
         });
     } catch (err) {
         next(err);
@@ -57,8 +69,21 @@ const updateTodo = async (req, res, next) => {
 
 const deleteTodo = async (req, res, next) => {
     try {
+
+        const deleted = await pool.query(
+            'DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *',
+            [req.params.id, req.user.id]
+        );
+
+        if (deleted.rows.length === 0) {
+            return res.status(404).json({
+                message: "Todo not found"
+            });
+        }
+
         res.status(200).json({
-            message: "Todo deleted successfully"
+            message: "Todo deleted successfully",
+            todo: deleted.rows[0]
         });
     } catch (err) {
         next(err);
