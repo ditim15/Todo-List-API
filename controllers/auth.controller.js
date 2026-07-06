@@ -13,12 +13,9 @@ const registerUser = async (req, res, next) => {
             });
         }
 
-
-
         const existingUser = await pool.query(
             "SELECT * FROM users WHERE email = $1", [email.toLowerCase()]
         );
-
 
         if (existingUser.rows.length > 0) {
             return res.status(409).json({ 
