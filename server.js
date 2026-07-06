@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import errorHandler from "./middleware/errorhandler.js";
 
 dotenv.config({
     path: './.env'
@@ -14,6 +15,8 @@ import todosRouter from "./routes/todos.js";
 
 app.use("/auth", authRouter);
 app.use("/todos", todosRouter);
+
+app.use(errorHandler);
 
 const startServer = async () => {
     try {
