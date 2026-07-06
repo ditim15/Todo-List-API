@@ -17,5 +17,13 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ditim15/Todo-List-API.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ditim15/Todo-List-API/issues"
+  },
+  "homepage": "https://github.com/ditim15/Todo-List-API#readme"
 }
