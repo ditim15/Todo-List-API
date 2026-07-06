@@ -45,10 +45,41 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
     try {
         const {email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Please provide email and password"
+            });
+        }
+
+        const result = await pool.query(
+            'SELECT * FROM users WHERE email = $1', [email.toLowerCase()]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                message: "User not found"
+            });
+        }
+
+        const user = result.rows[0];
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Invalid credentials"
+            });
+        }
 
         res.status(200).json({ 
-            message: "User logged in successfully" 
+            message: "User logged in successfully",
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            }
         });
+
     } catch (err) {
         next(err);
     }
