@@ -3,13 +3,27 @@ import pool from '../db/pool.js';
 // Gets all todos for the authenticated user.
 const getTodos = async (req, res, next) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
         const result = await pool.query(
-            'SELECT * FROM todos WHERE user_id = $1', [req.user.id]
+            'SELECT * FROM todos WHERE user_id = $1 LIMIT $2 OFFSET $3', [req.user.id, limit, offset]
         );
 
+        const totalTodos = await pool.query(
+            'SELECT COUNT(*) FROM todos WHERE user_id = $1', [req.user.id]
+        );
+
+        const total = parseInt(totalTodos.rows[0].count);
+        
         res.status(200).json({
             message: "Todos fetched successfully",
-            todos: result.rows
+            todos: result.rows,
+            page: page,
+            limit: limit,
+            total: total,
+            totalPages: Math.ceil(total / limit)
         });
     } catch (err) {
         next(err);
