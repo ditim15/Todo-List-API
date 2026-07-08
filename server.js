@@ -2,19 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 import errorHandler from "./middleware/errorhandler.js";
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 
 dotenv.config({
     path: './.env'
 });
 
 const app = express();
-
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000
-    max: 100,
-    message: { message: "Too many requests, please try again later" }
-})
 
 app.use(helmet());
 app.use(express.json());
