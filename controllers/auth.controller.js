@@ -178,8 +178,31 @@ const refreshAccessToken = async (req, res, next) => {
 
 }
 
+const logoutUser = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            return res.status(400).json({
+                message: "Refresh token is required"
+            });
+        }
+        const tokenHash = hashToken(refreshToken);
+
+        await pool.query(
+            'DELETE FROM refresh_tokens WHERE token_hash = $1', [tokenHash]
+        );
+
+        res.status(200).json({
+            message: "User logged out successfully"
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 export {
     registerUser,
     loginUser,
-    refreshAccessToken
+    refreshAccessToken,
+    logoutUser
 }
