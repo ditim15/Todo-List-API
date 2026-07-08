@@ -148,6 +148,18 @@ const refreshAccessToken = async (req, res, next) => {
             });
         }
 
+        await pool.query(
+            'DELETE FROM refresh_tokens WHERE id = $1', [storedToken.id]
+        );
+
+        const newRefreshToken = generateRefreshToken();
+        const newTokenHash = hashToken(newRefreshToken);
+
+        await pool.query(
+            'INSERT INTO refresh_tokens (user_id, token_hash) VALUES ($1, $2)',
+            [storedToken.user_id, newTokenHash]
+        );
+
         const accessToken = jwt.sign(
             { id: storedToken.user_id },
             process.env.JWT_SECRET,
@@ -156,7 +168,8 @@ const refreshAccessToken = async (req, res, next) => {
 
         res.status(200).json({
             message: "Access token refreshed successfully",
-            accessToken: accessToken
+            accessToken: accessToken,
+            refreshToken: newRefreshToken
         });
 
     } catch (err) {
