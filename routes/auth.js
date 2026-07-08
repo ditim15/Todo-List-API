@@ -12,6 +12,6 @@ const router = Router();
 
 router.post("/register", authLimiter, registerUser);
 router.post("/login", authLimiter, loginUser);
-router.post("/refresh", authLimiter, refreshAccessToken);
+router.post("/refresh", refreshAccessToken);
 
 export default router;
